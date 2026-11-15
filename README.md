@@ -30,7 +30,7 @@ Each technique is colored according to the highest severity of the use cases con
 |-----------|--------|---------------|
 | **P1** | ![Critical](https://img.shields.io/badge/-Critical-8957e5?style=flat) | < 15 minutes |
 | **P2** | ![High](https://img.shields.io/badge/-High-d1242f?style=flat) | < 1 hours |
-| **P3** | ![Medium](https://img.shields.io/badge/-Medium-0969da?style=flat) | < 4 minutes |
+| **P3** | ![Medium](https://img.shields.io/badge/-Medium-0969da?style=flat) | < 4 hours |
 | **P4** | ![Low](https://img.shields.io/badge/-Low-bf8700?style=flat) | < 24 hours |
 
 Severity is explicitly specified in approximately 20% of the source use cases; for the rest, it was inferred from tactics and threat-related keywords. The JSON file includes comments and metadata for each technique to distinguish explicit contributions from inferred ones. Note also that ATT&CK v19 reorganized its taxonomy: the **Defense Evasion** tactic was removed under that name and split into **Stealth** and **Defense Impairment**.
