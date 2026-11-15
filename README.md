@@ -1,4 +1,4 @@
-# Cybersecurity Use Cases & Playbooks
+# Cybersecurity Use Cases
 
 A collection of cybersecurity use cases designed to support the detection, investigation, and response to alerts and incidents. It includes Markdown playbooks organized by platform or finding source, a web portal for browsing them, and resources related to MITRE ATT&CK.
 
@@ -6,18 +6,7 @@ A collection of cybersecurity use cases designed to support the detection, inves
 
 ## Contents
 
-The collection includes more than 1,100 use cases across the following categories:
-
-| Category | Use cases |
-| --- | ---: |
-| AWS GuardDuty | 204 |
-| Cloud | 45 |
-| ESXi | 8 |
-| Linux | 22 |
-| macOS | 13 |
-| Network Devices | 100 |
-| PRE | 3 |
-| Windows | 718 |
+The collection includes more than 1,100 use cases across the following categories: `AWS GuardDuty`: 204, `Cloud`: 45, `ESXi`: 8, `Linux`: 22, `macOS`: 13, `Network Devices`: 100, `PRE`: 3, `Windows`: 718 
 
 Depending on the case, each use case may include a description, objective, detection logic, priority, MITRE ATT&CK mapping, investigation sources, analyst questions, false positives, and response recommendations.
 
@@ -37,12 +26,12 @@ MITRE ATT&CK organizes adversary behavior into **tactics** and **techniques**. A
 
 Each technique is colored according to the highest severity of the use cases contributing to its mapping:
 
-| Color | Severity |
-| --- | --- |
-| Purple | Critical |
-| Red | High |
-| Blue | Medium |
-| Yellow | Low |
+| Priority | Label | Response Time |
+|-----------|--------|---------------|
+| **P1** | ![Critical](https://img.shields.io/badge/-Critical-8957e5?style=flat) | < 15 minutes |
+| **P2** | ![High](https://img.shields.io/badge/-High-d1242f?style=flat) | < 1 hours |
+| **P3** | ![Medium](https://img.shields.io/badge/-Medium-0969da?style=flat) | < 4 minutes |
+| **P4** | ![Low](https://img.shields.io/badge/-Low-bf8700?style=flat) | < 24 hours |
 
 Severity is explicitly specified in approximately 20% of the source use cases; for the rest, it was inferred from tactics and threat-related keywords. The JSON file includes comments and metadata for each technique to distinguish explicit contributions from inferred ones. Note also that ATT&CK v19 reorganized its taxonomy: the **Defense Evasion** tactic was removed under that name and split into **Stealth** and **Defense Impairment**.
 
