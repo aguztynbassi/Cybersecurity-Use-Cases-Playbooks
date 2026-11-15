@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Cybersecurity Use Cases Portal</title>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+
+:root{
+    --bg:#16191f;
+    --card:#232f3e;
+    --border:#3b4552;
+    --orange:#ff9900;
+    --text:#ffffff;
+    --muted:#b5bec8;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,sans-serif;
+}
+
+header{
+    background:#101418;
+    padding:60px 20px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+}
+
+header h1{
+    font-size:3rem;
+    margin-bottom:10px;
+}
+
+header p{
+    color:var(--muted);
+}
+
+.container{
+    max-width:1700px;
+    margin:auto;
+    padding:30px;
+}
+
+.filters{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+input,
+select{
+    padding:14px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:#fff;
+}
+
+.counter{
+    color:var(--muted);
+    margin-bottom:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(380px,1fr));
+    gap:15px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px;
+    transition:.2s;
+}
+
+.card:hover{
+    border-color:var(--orange);
+    transform:translateY(-2px);
+}
+
+.card h3{
+    margin:12px 0;
+    line-height:1.4;
+    font-size:1rem;
+}
+
+.badge{
+    display:inline-block;
+    background:#101418;
+    color:var(--orange);
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:.75rem;
+    margin:3px;
+}
+
+.category{
+    color:#7fb8ff;
+    font-size:.85rem;
+    margin-bottom:10px;
+}
+
+.path{
+    color:var(--muted);
+    font-size:.75rem;
+    margin-bottom:12px;
+    word-break:break-word;
+}
+
+.open-btn{
+    margin-top:15px;
+    background:var(--orange);
+    color:black;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.open-btn:hover{
+    opacity:0.9;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.85);
+    z-index:9999;
+}
+
+.modal-content{
+    width:95%;
+    max-width:1500px;
+    height:92vh;
+    margin:2vh auto;
+    background:#232f3e;
+    border-radius:12px;
+    overflow:auto;
+    position:relative;
+    padding:30px;
+}
+
+.close-btn{
+    position:absolute;
+    top:15px;
+    right:20px;
+    font-size:36px;
+    cursor:pointer;
+}
+
+.modal-title{
+    color:var(--orange);
+    margin-bottom:20px;
+}
+
+.loading{
+    padding:25px;
+    text-align:center;
+    color:var(--orange);
+}
+
+/* MARKDOWN */
+
+#modalBody{
+    line-height:1.7;
+}
+
+#modalBody h1,
+#modalBody h2,
+#modalBody h3,
+#modalBody h4{
+    color:var(--orange);
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+#modalBody p{
+    margin-bottom:12px;
+}
+
+#modalBody ul,
+#modalBody ol{
+    margin-left:25px;
+    margin-bottom:15px;
+}
+
+#modalBody table{
+    width:100%;
+    border-collapse:collapse;
+    margin:20px 0;
+}
+
+#modalBody th,
+#modalBody td{
+    border:1px solid #4c5866;
+    padding:10px;
+}
+
+#modalBody th{
+    background:#101418;
+}
+
+#modalBody pre{
+    background:#101418;
+    padding:15px;
+    border-radius:8px;
+    overflow:auto;
+    margin:15px 0;
+}
+
+#modalBody code{
+    background:#101418;
+    padding:3px 5px;
+    border-radius:4px;
+}
+
+#modalBody a{
+    color:#5daeff;
+}
+
+@media(max-width:768px){
+
+    .filters{
+        grid-template-columns:1fr;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    header h1{
+        font-size:2rem;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>Cybersecurity Use Cases Portal</h1>
+
+    <p>
+        Windows, Linux, macOS, Cloud, ESXi,
+        Network Devices and PRE Detection Content
+    </p>
+
+</header>
+
+<div class="container">
+
+    <div class="filters">
+
+        <input
+            id="search"
+            placeholder="Search use cases, technologies, attack techniques...">
+
+        <select id="category">
+
+            <option value="">
+                All Categories
+            </option>
+
+        </select>
+
+    </div>
+
+    <div id="count" class="counter">
+        Loading repository...
+    </div>
+
+    <div id="cards" class="grid"></div>
+
+</div>
+
+<div id="fileModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close-btn">&times;</span>
+
+        <div id="modalTitle" class="modal-title"></div>
+
+        <div id="modalBody"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+const OWNER = "aguztynbassi";
+const REPO = "Cybersecurity-Use-Cases-Playbooks";
+
+let items = [];
+let cache = {};
+
+async function loadRepository(){
+
+    const response = await fetch(
+        `https://api.github.com/repos/${OWNER}/${REPO}/git/trees/main?recursive=1`
+    );
+
+    const data = await response.json();
+
+    items = data.tree
+
+        .filter(item =>
+            item.path.startsWith("Use Cases by Finding/")
+        )
+
+        .filter(item =>
+            item.path.endsWith(".md")
+        )
+
+        .map(item => {
+
+            const parts = item.path.split("/");
+
+            const category = parts[1];
+
+            return {
+
+                path:item.path,
+
+                category:category,
+
+                title:parts[parts.length-1]
+                    .replace(".md","")
+                    .replaceAll("_"," ")
+                    .replaceAll("-"," "),
+
+                tags:item.path
+                    .replace(".md","")
+                    .split(/[\/_.]/)
+
+            };
+
+        });
+
+    items.sort((a,b) =>
+        a.title.localeCompare(b.title)
+    );
+
+    buildCategoryFilter();
+
+    render();
+}
+
+function buildCategoryFilter(){
+
+    const categories =
+        [...new Set(
+            items.map(i => i.category)
+        )].sort();
+
+    const select =
+        document.getElementById("category");
+
+    categories.forEach(category => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = category;
+        option.textContent = category;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+function render(){
+
+    const text =
+        document.getElementById("search")
+        .value
+        .toLowerCase();
+
+    const category =
+        document.getElementById("category")
+        .value;
+
+    const filtered = items.filter(item => {
+
+        const searchMatch =
+
+            item.title.toLowerCase().includes(text)
+            ||
+            item.path.toLowerCase().includes(text);
+
+        const categoryMatch =
+
+            !category
+            ||
+            item.category === category;
+
+        return searchMatch &&
+               categoryMatch;
+
+    });
+
+    document.getElementById("count").innerHTML =
+        `${filtered.length} Use Cases Found`;
+
+    document.getElementById("cards").innerHTML =
+
+        filtered.map(item => `
+
+            <div class="card">
+
+                <span class="badge">
+                    Use Case
+                </span>
+
+                <h3>${item.title}</h3>
+
+                <div class="category">
+                    ${item.category}
+                </div>
+
+                <div class="path">
+                    ${item.path}
+                </div>
+
+                <div>
+
+                    ${item.tags
+                        .slice(2,7)
+                        .map(tag =>
+                            `<span class="badge">${tag}</span>`
+                        )
+                        .join("")
+                    }
+
+                </div>
+
+                <button
+                    class="open-btn"
+                    onclick="openFile('${item.path}')">
+
+                    Open Use Case
+
+                </button>
+
+            </div>
+
+        `).join("");
+
+}
+
+async function getFileContent(path){
+
+    if(cache[path]){
+        return cache[path];
+    }
+
+    const response = await fetch(
+
+        `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${path}`
+
+    );
+
+    const text =
+        await response.text();
+
+    cache[path] = text;
+
+    return text;
+}
+
+async function openFile(path){
+
+    document.getElementById("fileModal")
+        .style.display = "block";
+
+    document.getElementById("modalTitle")
+        .innerHTML = `<h2>${path}</h2>`;
+
+    document.getElementById("modalBody")
+        .innerHTML =
+        `<div class="loading">Loading document...</div>`;
+
+    try{
+
+        const markdown =
+            await getFileContent(path);
+
+        document.getElementById("modalBody")
+            .innerHTML =
+            marked.parse(markdown);
+
+    }
+    catch(err){
+
+        document.getElementById("modalBody")
+            .innerHTML =
+            "<h2>Error loading document</h2>";
+
+    }
+
+}
+
+function closeModal(){
+
+    document.getElementById("fileModal")
+        .style.display = "none";
+
+}
+
+document
+.getElementById("search")
+.addEventListener("input", render);
+
+document
+.getElementById("category")
+.addEventListener("change", render);
+
+document
+.querySelector(".close-btn")
+.addEventListener("click", closeModal);
+
+window.addEventListener("click", e => {
+
+    if(e.target.id === "fileModal"){
+        closeModal();
+    }
+
+});
+
+document.addEventListener("keydown", e => {
+
+    if(e.key === "Escape"){
+        closeModal();
+    }
+
+});
+
+loadRepository();
+
+</script>
+
+</body>
+</html>
