@@ -35,7 +35,7 @@ The following map visualizes MITRE ATT&CK techniques mapped to the use cases:
 
 MITRE ATT&CK organizes adversary behavior into **tactics** and **techniques**. A tactic describes the adversary's objective (the “why”); a technique describes the method used to achieve it (the “how”). Use cases with ATT&CK identifiers can be mapped to one or more techniques and, through them, to their associated tactics. The map helps explore this coverage, but it does not imply that every tactic or technique is covered, or that a mapped technique has been detected in your environment.
 
-The map is based on MITRE ATT&CK Enterprise v19 and was generated from 909 non-AWS use cases in the [SID project](https://github.com/aguztynbassi/SID). Each technique is colored according to the highest severity of the use cases contributing to its mapping:
+Each technique is colored according to the highest severity of the use cases contributing to its mapping:
 
 | Color | Severity |
 | --- | --- |
@@ -57,6 +57,8 @@ python3 -m http.server 8000
 ```
 
 Then open [http://localhost:8000](http://localhost:8000). The portal retrieves the index and Markdown files from GitHub, so an Internet connection and access to the repository are required.
+
+![Web portal](./Mitre%20Attack%20Framework/Web%20portal.png)
 
 ### Markdown files
 
