@@ -4,16 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Cybersecurity Use Cases Portal</title>
+<title>Cybersecurity Use Cases & Playbooks Portal</title>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
+
 :root{
+    --aws-orange:#ff9900;
+    --aws-blue:#1f73b7;
     --bg:#16191f;
     --card:#232f3e;
     --border:#3b4552;
-    --orange:#ff9900;
     --text:#ffffff;
     --muted:#b5bec8;
 }
@@ -27,30 +29,34 @@
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:Arial,Helvetica,sans-serif;
+    font-family:Segoe UI,Arial,sans-serif;
 }
 
-/* Header */
-
 header{
-    background:#101418;
-    padding:60px 20px;
+    background:
+        linear-gradient(
+            135deg,
+            #0f1419,
+            #1a2431,
+            #232f3e
+        );
+
+    padding:80px 30px;
     text-align:center;
     border-bottom:1px solid var(--border);
 }
 
 header h1{
     font-size:3rem;
-    margin-bottom:10px;
+    margin-bottom:15px;
 }
 
 header p{
-    color:var(--muted);
-    max-width:1100px;
+    max-width:1000px;
     margin:auto;
+    color:var(--muted);
+    line-height:1.7;
 }
-
-/* Layout */
 
 .container{
     max-width:1600px;
@@ -59,128 +65,125 @@ header p{
 }
 
 .filters{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
     margin-bottom:25px;
 }
 
-.filter-bar{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    align-items:center;
+input,
+select{
+    background:var(--card);
+    color:white;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
 }
 
 #search{
     flex:1;
-    min-width:300px;
-    padding:14px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:var(--card);
-    color:white;
-    font-size:14px;
+    min-width:350px;
 }
 
-#categoryFilter{
-    min-width:220px;
-    padding:14px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:var(--card);
-    color:white;
-    font-size:14px;
+#sectionFilter{
+    min-width:280px;
 }
 
-.clear-btn{
-    padding:14px 20px;
+button{
+    background:var(--aws-orange);
+    color:black;
     border:none;
     border-radius:10px;
-    background:#49515c;
-    color:white;
-    font-weight:bold;
+    padding:14px 20px;
     cursor:pointer;
-    transition:.2s;
+    font-weight:bold;
 }
 
-.clear-btn:hover{
-    background:var(--orange);
-    color:black;
+button:hover{
+    opacity:.9;
 }
 
-.counter{
-    margin-bottom:20px;
+.stats{
     color:var(--muted);
+    margin-bottom:25px;
 }
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
-    gap:16px;
-}
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(360px,1fr)
+        );
 
-/* Cards */
+    gap:20px;
+}
 
 .card{
     background:var(--card);
     border:1px solid var(--border);
-    border-radius:12px;
+    border-radius:14px;
     padding:20px;
-    transition:.2s;
+    transition:.25s;
 }
 
 .card:hover{
-    border-color:var(--orange);
-    transform:translateY(-2px);
+    transform:translateY(-4px);
+    border-color:var(--aws-orange);
 }
 
-.card h3{
-    margin:10px 0;
-    line-height:1.4;
-    font-size:1rem;
-}
-
-.folder{
-    color:var(--muted);
-    font-size:.8rem;
-    margin-bottom:12px;
-    word-break:break-word;
+.badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:15px;
 }
 
 .badge{
-    display:inline-block;
     background:#101418;
-    color:var(--orange);
+    color:var(--aws-orange);
+    font-size:.75rem;
     padding:5px 10px;
     border-radius:20px;
-    font-size:.75rem;
-    margin:3px;
+}
+
+.card h3{
+    line-height:1.5;
+    margin-bottom:12px;
+}
+
+.path{
+    color:var(--muted);
+    font-size:.8rem;
+    word-break:break-word;
 }
 
 .open-btn{
-    margin-top:15px;
-    border:none;
-    background:var(--orange);
-    color:black;
-    font-weight:bold;
-    padding:10px 16px;
-    border-radius:8px;
-    cursor:pointer;
+    margin-top:16px;
 }
 
-.open-btn:hover{
-    opacity:.9;
+.loading{
+    text-align:center;
+    padding:50px;
+    color:var(--aws-orange);
 }
 
-/* Modal */
+.error{
+    color:#ff6b6b;
+    text-align:center;
+    padding:30px;
+}
 
 .modal{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.85);
-    z-index:9999;
+    background:rgba(0,0,0,.88);
+    z-index:99999;
 }
 
 .modal-content{
+    position:relative;
     width:95%;
     max-width:1500px;
     height:92vh;
@@ -188,87 +191,70 @@ header p{
     background:#232f3e;
     border-radius:12px;
     overflow:auto;
-    position:relative;
     padding:30px;
 }
 
-.close-btn{
+.close{
     position:absolute;
     top:15px;
-    right:20px;
-    font-size:36px;
+    right:25px;
+    font-size:40px;
     cursor:pointer;
 }
 
-.modal-title{
-    color:var(--orange);
+#playbookTitle{
+    color:var(--aws-orange);
     margin-bottom:20px;
 }
 
-.loading{
-    text-align:center;
-    color:var(--orange);
-    padding:30px;
-    font-size:1.1rem;
+#playbookBody{
+    line-height:1.8;
 }
 
-/* Markdown */
-
-#modalBody{
-    line-height:1.7;
-}
-
-#modalBody h1,
-#modalBody h2,
-#modalBody h3,
-#modalBody h4{
-    color:var(--orange);
-    margin-top:20px;
+#playbookBody h1,
+#playbookBody h2,
+#playbookBody h3,
+#playbookBody h4{
+    color:var(--aws-orange);
+    margin-top:25px;
     margin-bottom:10px;
 }
 
-#modalBody p{
-    margin-bottom:12px;
-}
-
-#modalBody ul,
-#modalBody ol{
-    margin-left:30px;
-    margin-bottom:15px;
-}
-
-#modalBody table{
+#playbookBody table{
     width:100%;
     border-collapse:collapse;
     margin:20px 0;
 }
 
-#modalBody th,
-#modalBody td{
-    border:1px solid #49515c;
+#playbookBody th,
+#playbookBody td{
+    border:1px solid var(--border);
     padding:10px;
 }
 
-#modalBody th{
-    background:#101418;
-}
-
-#modalBody pre{
+#playbookBody pre{
     background:#101418;
     padding:15px;
     border-radius:8px;
     overflow:auto;
-    margin:15px 0;
 }
 
-#modalBody code{
+#playbookBody code{
     background:#101418;
-    padding:2px 5px;
+    padding:2px 4px;
     border-radius:4px;
 }
 
-#modalBody a{
-    color:#65b5ff;
+#playbookBody a{
+    color:#6cbcff;
+}
+
+footer{
+    text-align:center;
+    color:var(--muted);
+    padding:25px;
+    border-top:1px solid var(--border);
+    margin-top:50px;
 }
 
 @media(max-width:768px){
@@ -277,316 +263,317 @@ header p{
         font-size:2rem;
     }
 
-    .grid{
-        grid-template-columns:1fr;
-    }
-
-    .modal-content{
-        width:98%;
-        padding:20px;
-    }
-
-    .filter-bar{
+    .filters{
         flex-direction:column;
-        align-items:stretch;
     }
 
     #search,
-    #categoryFilter,
-    .clear-btn{
+    #sectionFilter{
         width:100%;
+        min-width:unset;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
     }
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-    <h1>Cybersecurity Use Cases Portal</h1>
-    <p>
-        Browse and search cybersecurity use cases,
-        detections, investigations and response playbooks.
-    </p>
+
+<h1>Cybersecurity Use Cases & Playbooks</h1>
+
+<p>
+Centralized portal for threat detection, investigations,
+incident response procedures, threat hunting playbooks,
+digital forensics and cybersecurity operational guides.
+</p>
+
 </header>
 
 <div class="container">
 
-    <div class="filters">
+<div class="filters">
 
-        <div class="filter-bar">
+    <input
+        id="search"
+        type="text"
+        placeholder="aws, windows, linux...">
 
-            <input
-                id="search"
-                type="text"
-                placeholder="Search use cases, services, findings, tactics, techniques...">
-
-            <select id="categoryFilter">
-                <option value="">All Categories</option>
-            </select>
-
-            <button id="clearFilters" class="clear-btn">
-                Clear Filters
-            </button>
-
-        </div>
-
-    </div>
-
-    <div id="count" class="counter">
-        Loading repository...
-    </div>
-
-    <div id="cards" class="grid"></div>
+    <button id="clearFilters">
+        Clear Filters
+    </button>
 
 </div>
 
-<div id="fileModal" class="modal">
+<div id="stats" class="stats">
+    Loading repository...
+</div>
 
-    <div class="modal-content">
-
-        <span class="close-btn">&times;</span>
-
-        <div id="modalTitle" class="modal-title"></div>
-
-        <div id="modalBody"></div>
-
-    </div>
+<div id="cards" class="grid"></div>
 
 </div>
+
+<div id="modal" class="modal">
+
+<div class="modal-content">
+
+<span id="closeModal" class="close">&times;</span>
+
+<h2 id="playbookTitle"></h2>
+
+<div id="playbookBody"></div>
+
+</div>
+
+</div>
+
+<footer>
+Cybersecurity Use Cases & Playbooks Portal
+</footer>
 
 <script>
 
 const OWNER = "aguztynbassi";
-const REPO  = "Cybersecurity-Use-Cases-Playbooks";
+const REPO = "Cybersecurity-Use-Cases-Playbooks";
 
-let items = [];
+let DEFAULT_BRANCH = "main";
+let documents = [];
 const cache = {};
 
-async function loadRepository(){
+async function getDefaultBranch() {
 
-    const response =
-        await fetch(
-            `https://api.github.com/repos/${OWNER}/${REPO}/git/trees/main?recursive=1`
-        );
-
-    const data = await response.json();
-
-    items = data.tree
-
-        .filter(item =>
-            item.path.startsWith("Use Cases by Finding/")
-        )
-
-        .filter(item =>
-            item.path.endsWith(".md")
-        )
-
-        .filter(item =>
-            !item.path.endsWith("000_INDEX.md")
-        )
-
-        .map(item => ({
-
-            path:item.path,
-
-            category:item.path.split("/")[1],
-
-            title:item.path
-                .split("/")
-                .pop()
-                .replace(".md","")
-                .replaceAll("_"," ")
-                .replaceAll("-"," "),
-
-            tags:item.path
-                .replace(".md","")
-                .split(/[\/_.]/)
-
-        }));
-
-    items.sort((a,b) =>
-        a.title.localeCompare(b.title)
+    const response = await fetch(
+        `https://api.github.com/repos/${OWNER}/${REPO}`
     );
 
-    buildCategoryFilter();
+    if (!response.ok) {
+        throw new Error("Repository not accessible");
+    }
 
-    render();
+    const repo = await response.json();
+
+    DEFAULT_BRANCH = repo.default_branch;
 }
 
-function buildCategoryFilter(){
+async function loadRepository() {
 
-    const categories =
-        [...new Set(
-            items.map(item => item.category)
-        )]
-        .sort();
+    try {
 
-    const select =
-        document.getElementById("categoryFilter");
+        document.getElementById("stats").textContent =
+            "Loading repository...";
 
-    categories.forEach(category => {
+        await getDefaultBranch();
 
-        const option =
-            document.createElement("option");
+        const response = await fetch(
+            `https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${DEFAULT_BRANCH}?recursive=1`
+        );
 
-        option.value = category;
-        option.textContent = category;
+        if (!response.ok) {
+            throw new Error("Tree API failed");
+        }
 
-        select.appendChild(option);
+        const data = await response.json();
 
-    });
+        documents = data.tree
+            .filter(file => file.type === "blob")
+            .filter(file => file.path.endsWith(".md"))
+            .filter(file => !file.path.toLowerCase().includes("readme"))
+            .map(file => {
+
+                const parts = file.path.split("/");
+
+                return {
+
+                    path:file.path,
+
+                    title:parts[parts.length - 1]
+                        .replace(".md","")
+                        .replaceAll("_"," ")
+                        .replaceAll("-"," "),
+
+                    section:
+                        parts.length > 0
+                        ? parts[0]
+                        : "General"
+
+                };
+
+            });
+
+        documents.sort((a,b) =>
+            a.title.localeCompare(b.title)
+        );
+
+        // buildFilters();
+
+        render();
+
+    } catch(error) {
+
+        console.error(error);
+
+        document.getElementById("stats").innerHTML =
+            '<div class="error">Unable to load repository.</div>';
+    }
 }
 
-function render(){
+function render() {
 
-    const search =
+    const query =
         document
             .getElementById("search")
             .value
             .toLowerCase();
 
-    const category =
-        document
-            .getElementById("categoryFilter")
-            .value;
-
     const filtered =
-        items.filter(item => {
+        documents.filter(item => {
 
-            const matchesText =
-                item.title.toLowerCase().includes(search) ||
-                item.path.toLowerCase().includes(search);
+            return (
+                item.title
+                    .toLowerCase()
+                    .includes(query)
 
-            const matchesCategory =
-                !category ||
-                item.category === category;
+                ||
 
-            return matchesText && matchesCategory;
+                item.path
+                    .toLowerCase()
+                    .includes(query)
+
+                ||
+
+                item.section
+                    .toLowerCase()
+                    .includes(query)
+            );
 
         });
 
-    document.getElementById("count").innerHTML =
-        `${filtered.length} Use Cases indexed`;
+    document.getElementById("stats").innerHTML =
+        `${filtered.length} playbooks indexed`;
 
     document.getElementById("cards").innerHTML =
-
         filtered.map(item => `
 
-            <div class="card">
+        <div class="card">
+
+            <div class="badges">
 
                 <span class="badge">
-                    ${item.category}
+                    ${item.section}
                 </span>
 
-                <h3>${item.title}</h3>
-
-                <div class="folder">
-                    ${item.path}
-                </div>
-
-                <button
-                    class="open-btn"
-                    onclick="openFile('${item.path}')">
-
-                    Open Use Case
-
-                </button>
-
             </div>
+
+            <h3>${item.title}</h3>
+
+            <div class="path">
+                ${item.path}
+            </div>
+
+            <button
+                class="open-btn"
+                onclick="openDocument('${item.path}')">
+                Open Playbook
+            </button>
+
+        </div>
 
         `).join("");
 }
 
-async function getFileContent(path){
+async function openDocument(path) {
 
-    if(cache[path]){
-        return cache[path];
-    }
+    document.getElementById("modal").style.display =
+        "block";
 
-    const url =
-        `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${path}`;
+    document.getElementById("playbookTitle")
+        .textContent =
+        path.split("/").pop();
 
-    const response =
-        await fetch(url);
-
-    const text =
-        await response.text();
-
-    cache[path] = text;
-
-    return text;
-}
-
-async function openFile(path){
-
-    document.getElementById("fileModal")
-        .style.display = "block";
-
-    document.getElementById("modalTitle")
-        .innerHTML =
-        `<h2>${path.split("/").pop()}</h2>`;
-
-    document.getElementById("modalBody")
-        .innerHTML =
-        '<div class="loading">Loading Use Case...</div>';
+    document.getElementById("playbookBody").innerHTML =
+        '<div class="loading">Loading document...</div>';
 
     try {
 
-        const markdown =
-            await getFileContent(path);
+        let markdown;
 
-        document.getElementById("modalBody")
+        if(cache[path]){
+
+            markdown = cache[path];
+
+        } else {
+
+            const response = await fetch(
+                `https://raw.githubusercontent.com/${OWNER}/${REPO}/${DEFAULT_BRANCH}/${path}`
+            );
+
+            markdown = await response.text();
+
+            cache[path] = markdown;
+        }
+
+        document.getElementById("playbookBody")
             .innerHTML =
             marked.parse(markdown);
 
     } catch(error){
 
-        document.getElementById("modalBody")
+        document.getElementById("playbookBody")
             .innerHTML =
-            "<h2>Error loading file</h2>";
+            "<h3>Error loading document</h3>";
 
-        console.error(error);
     }
 }
 
-function closeModal(){
+document
+.getElementById("search")
+.addEventListener("input",render);
 
-    document.getElementById("fileModal")
+document
+.getElementById("clearFilters")
+.addEventListener("click",() => {
+
+    document.getElementById("search").value = "";
+
+    render();
+
+});
+
+document
+.getElementById("closeModal")
+.addEventListener("click",() => {
+
+    document.getElementById("modal")
         .style.display = "none";
-}
 
-document.querySelector(".close-btn")
-    .addEventListener("click", closeModal);
-
-window.addEventListener("click", function(e){
-
-    if(e.target.id === "fileModal"){
-        closeModal();
-    }
 });
 
-document.addEventListener("keydown", function(e){
+window.addEventListener("click",(e)=>{
 
-    if(e.key === "Escape"){
-        closeModal();
+    if(e.target.id==="modal"){
+
+        document.getElementById("modal")
+            .style.display="none";
+
     }
+
 });
 
-document.getElementById("search")
-    .addEventListener("input", render);
+document.addEventListener("keydown",(e)=>{
 
-document.getElementById("categoryFilter")
-    .addEventListener("change", render);
+    if(e.key==="Escape"){
 
-document.getElementById("clearFilters")
-    .addEventListener("click", () => {
+        document.getElementById("modal")
+            .style.display="none";
 
-        document.getElementById("search").value = "";
-        document.getElementById("categoryFilter").value = "";
+    }
 
-        render();
-    });
+});
 
 loadRepository();
 
