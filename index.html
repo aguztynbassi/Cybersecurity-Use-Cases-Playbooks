@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cybersecurity Use Cases Portal</title>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+
+:root{
+    --bg:#16191f;
+    --card:#232f3e;
+    --border:#3b4552;
+    --orange:#ff9900;
+    --text:#ffffff;
+    --muted:#b5bec8;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+/* Header */
+
+header{
+    background:#101418;
+    padding:60px 20px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+}
+
+header h1{
+    font-size:3rem;
+    margin-bottom:10px;
+}
+
+header p{
+    color:var(--muted);
+}
+
+/* Layout */
+
+.container{
+    max-width:1600px;
+    margin:auto;
+    padding:30px;
+}
+
+.filters{
+    margin-bottom:25px;
+}
+
+#search{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:white;
+    font-size:14px;
+}
+
+.counter{
+    margin-bottom:20px;
+    color:var(--muted);
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+    gap:16px;
+}
+
+/* Cards */
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px;
+    transition:.2s;
+}
+
+.card:hover{
+    border-color:var(--orange);
+    transform:translateY(-2px);
+}
+
+.card h3{
+    margin:10px 0;
+    line-height:1.4;
+    font-size:1rem;
+}
+
+.folder{
+    color:var(--muted);
+    font-size:.8rem;
+    margin-bottom:12px;
+    word-break:break-word;
+}
+
+.badge{
+    display:inline-block;
+    background:#101418;
+    color:var(--orange);
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:.75rem;
+    margin:3px;
+}
+
+.open-btn{
+    margin-top:15px;
+    border:none;
+    background:var(--orange);
+    color:black;
+    font-weight:bold;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.open-btn:hover{
+    opacity:0.9;
+}
+
+/* Modal */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.85);
+    z-index:9999;
+}
+
+.modal-content{
+    width:95%;
+    max-width:1500px;
+    height:92vh;
+    margin:2vh auto;
+    background:#232f3e;
+    border-radius:12px;
+    overflow:auto;
+    position:relative;
+    padding:30px;
+}
+
+.close-btn{
+    position:absolute;
+    top:15px;
+    right:20px;
+    font-size:36px;
+    cursor:pointer;
+}
+
+.modal-title{
+    color:var(--orange);
+    margin-bottom:20px;
+}
+
+.loading{
+    text-align:center;
+    color:var(--orange);
+    padding:30px;
+    font-size:1.1rem;
+}
+
+/* Markdown Styling */
+
+#modalBody{
+    line-height:1.7;
+}
+
+#modalBody h1,
+#modalBody h2,
+#modalBody h3,
+#modalBody h4{
+    color:var(--orange);
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+#modalBody p{
+    margin-bottom:12px;
+}
+
+#modalBody ul,
+#modalBody ol{
+    margin-left:30px;
+    margin-bottom:15px;
+}
+
+#modalBody table{
+    width:100%;
+    border-collapse:collapse;
+    margin:20px 0;
+}
+
+#modalBody th,
+#modalBody td{
+    border:1px solid #49515c;
+    padding:10px;
+}
+
+#modalBody th{
+    background:#101418;
+}
+
+#modalBody pre{
+    background:#101418;
+    padding:15px;
+    border-radius:8px;
+    overflow:auto;
+    margin:15px 0;
+}
+
+#modalBody code{
+    background:#101418;
+    padding:2px 5px;
+    border-radius:4px;
+}
+
+#modalBody a{
+    color:#65b5ff;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+    header h1{
+        font-size:2rem;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .modal-content{
+        width:98%;
+        padding:20px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>Cybersecurity Use Cases Portal</h1>
+
+    <p>
+This portal provides a collection of cybersecurity use cases, playbooks, and related resources. Use the search bar below to find specific use cases, services, findings, tactics, or techniques.
+    </p>
+
+</header>
+
+<div class="container">
+
+    <div class="filters">
+
+        <input
+            id="search"
+            type="text"
+            placeholder="Search use cases, services, findings, tactics, techniques...">
+
+    </div>
+
+    <div id="count" class="counter">
+        Loading repository...
+    </div>
+
+    <div id="cards" class="grid"></div>
+
+</div>
+
+<!-- Modal -->
+
+<div id="fileModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close-btn">&times;</span>
+
+        <div id="modalTitle" class="modal-title"></div>
+
+        <div id="modalBody"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+const OWNER = "aguztynbassi";
+const REPO  = "Cybersecurity-Use-Cases-Playbooks";
+
+let items = [];
+const cache = {};
+
+/*
+ * Load only Use Cases
+ */
+async function loadRepository(){
+
+    const response = await fetch(
+        `https://api.github.com/repos/${OWNER}/${REPO}/git/trees/main?recursive=1`
+    );
+
+    const data = await response.json();
+
+    items = data.tree
+
+        .filter(item =>
+            item.path.startsWith("Use Cases by Finding/")
+        )
+
+        .filter(item =>
+            item.path.endsWith(".md")
+        )
+
+        .filter(item =>
+            !item.path.endsWith("000_INDEX.md")
+        )
+
+        .map(item => ({
+
+            path:item.path,
+
+            title:item.path
+                .split("/")
+                .pop()
+                .replace(".md","")
+                .replaceAll("_"," ")
+                .replaceAll("-"," "),
+
+            tags:item.path
+                .replace(".md","")
+                .split(/[\/_.]/)
+
+        }));
+
+    items.sort((a,b)=>
+        a.title.localeCompare(b.title)
+    );
+
+    render();
+}
+
+function render(){
+
+    const search =
+        document
+            .getElementById("search")
+            .value
+            .toLowerCase();
+
+    const filtered =
+        items.filter(item =>
+            item.title.toLowerCase().includes(search) ||
+            item.path.toLowerCase().includes(search)
+        );
+
+    document
+        .getElementById("count")
+        .innerHTML = `${filtered.length} Use Cases indexed`;
+
+    document
+        .getElementById("cards")
+        .innerHTML =
+            filtered.map(item => `
+
+                <div class="card">
+
+                    <span class="badge">
+                        Use Case
+                    </span>
+
+                    <h3>
+                        ${item.title}
+                    </h3>
+
+                    <div class="folder">
+                        ${item.path}
+                    </div>
+
+                    <div>
+
+                        ${item.tags
+                            .slice(1,6)
+                            .map(tag => `
+                                <span class="badge">${tag}</span>
+                            `)
+                            .join("")
+                        }
+
+                    </div>
+
+                    <button
+                        class="open-btn"
+                        onclick="openFile('${item.path}')">
+
+                        Open Use Case
+
+                    </button>
+
+                </div>
+
+            `).join("");
+}
+
+async function getFileContent(path){
+
+    if(cache[path]){
+        return cache[path];
+    }
+
+    const url =
+        `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${path}`;
+
+    const response =
+        await fetch(url);
+
+    const text =
+        await response.text();
+
+    cache[path] = text;
+
+    return text;
+}
+
+async function openFile(path){
+
+    document.getElementById("fileModal")
+        .style.display = "block";
+
+    document.getElementById("modalTitle")
+        .innerHTML =
+        `<h2>${path.split("/").pop()}</h2>`;
+
+    document.getElementById("modalBody")
+        .innerHTML =
+        '<div class="loading">Loading Use Case...</div>';
+
+    try{
+
+        const markdown =
+            await getFileContent(path);
+
+        document.getElementById("modalBody")
+            .innerHTML =
+            marked.parse(markdown);
+
+    }catch(error){
+
+        document.getElementById("modalBody")
+            .innerHTML =
+            "<h2>Error loading file</h2>";
+
+        console.error(error);
+
+    }
+
+}
+
+function closeModal(){
+
+    document.getElementById("fileModal")
+        .style.display = "none";
+
+}
+
+document
+    .querySelector(".close-btn")
+    .addEventListener("click", closeModal);
+
+window.addEventListener("click", function(e){
+
+    if(e.target.id === "fileModal"){
+        closeModal();
+    }
+
+});
+
+document.addEventListener("keydown", function(e){
+
+    if(e.key === "Escape"){
+        closeModal();
+    }
+
+});
+
+document
+    .getElementById("search")
+    .addEventListener("input", render);
+
+loadRepository();
+
+</script>
+
+</body>
+</html>
