@@ -1,0 +1,133 @@
+# Anomalous Behavior - S3 (Exfiltration)
+
+## Description
+Alert generated when AWS GuardDuty identifies the finding type `Exfiltration:S3/AnomalousBehavior`. Anomalous behavior has been detected affecting the S3 bucket, relative to its expected baseline. The alert must be reviewed by the SOC to validate its legitimacy, scope, affected resource, and potential impact.
+
+## Objective
+Detect and prioritize potential malicious, anomalous, or unauthorized activities related to S3 buckets, enabling the SOC to initiate a structured investigation, reduce operational risk, and activate containment procedures when indicators of compromise are identified.
+
+## Logic
+The detection is triggered when an AWS GuardDuty event is received with `finding.type` equal to:
+
+`Exfiltration:S3/AnomalousBehavior`
+
+The prioritization logic should consider severity, asset criticality, event recurrence, network source/destination, involved identity, AWS region, AWS account, and correlated activity in supporting data sources.
+
+Patterns or conditions to validate:
+
+- Exact match of `finding.type` with the use case.
+- GuardDuty severity equal to or above the SOC-defined threshold.
+- Production, critical, publicly exposed, or sensitive-data resource.
+- IP address, domain, user, role, access key, pod, function, or bucket not recognized by the resource owner.
+- CloudTrail events, VPC Flow Logs, DNS logs, service logs, or runtime activity occurring close to the first or last observed event.
+- Sensitive changes following the event, such as permissions, policies, credentials, logging configurations, public exposure, command execution, or data access.
+
+## Severity Matrix
+
+| Priority | Label | Response Time | Description |
+|-----------|--------|---------------|-------------|
+| **P2** | High | < 1 hour | Confirmed compromise with containment needed, lateral movement detected, or privileged credential abuse |
+
+## MITRE ATT&CK
+
+- T1567 - Exfiltration Over Web Service
+
+## Threat
+- **Primary Threat:** Exfiltration.
+- **Family or Mechanism:** AnomalousBehavior.
+- Anomalous behavior has been detected affecting the S3 bucket, relative to its expected baseline. The analyst should consider credential compromise, malware infection, cloud service abuse, public exposure, evasion, reconnaissance, impact, or exfiltration depending on the technical context of the finding.
+- **Data Sources:** AWS GuardDuty findings, CloudTrail S3 Data Events, S3 Server Access Logs, bucket policy/ACL configuration.
+
+## Investigation Sources
+- **AWS GuardDuty Finding Details:** finding ID, type, severity, title, description, firstSeen, lastSeen, count, accountId, region.
+- **AWS CloudTrail:** API calls, userIdentity, sourceIPAddress, userAgent, errorCode, requestParameters, responseElements.
+- **Network Logs:** VPC Flow Logs, DNS logs, ports, protocols, transferred bytes, remote IP, country, and ASN.
+- **Resource Configuration:** tags, owner, policies, public exposure, security groups, ACLs, roles, or effective permissions.
+- Operational validation with the resource owner, platform team, cloud team, DevOps team, or application owner.
+
+## Sigma Rule
+
+```yaml
+title: 'AWS: Anomalous Behavior - S3 (Exfiltration)'
+id: 4f58168f-adcc-5cf3-a9f1-f630a04c65dc
+status: experimental
+description: |
+    This GuardDuty finding uses machine-learning behavioral analysis to flag an S3 bucket being accessed in a way
+    that deviates from its own historical baseline - specifically, downloading or copying an unusually large
+    volume of objects, consistent with bulk data theft.
+references:
+    - 'https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-s3.html'
+    - 'https://docs.aws.amazon.com/guardduty/latest/ug/compromised-s3.html'
+    - 'https://csrc.nist.gov/pubs/sp/800/61/r3/final'
+    - 'https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html'
+date: '2026-10-13'
+modified: '2026-10-13'
+author: 'https://github.com/aguztynbassi'
+tags:
+    - attack.t1567
+logsource:
+    category: cloud
+    product: aws
+    service: guardduty
+detection:
+    selection:
+        detail.type:
+            - 'Exfiltration:S3/AnomalousBehavior'
+    condition: selection
+falsepositives:
+    - 'A legitimate but newly-deployed batch job, migration, backup, or analytics pipeline is accessing the bucket at a different scale...'
+    - 'A new team or application was recently granted access to the bucket and its usage pattern has not yet been absorbed into...'
+    - 'An approved bulk lifecycle operation (archival, cleanup, reorganization) is running as scheduled.'
+level: high
+```
+
+## Investigation
+
+Mandatory 5W Questions:
+
+- **Who:** Which AWS account, identity, user, role, access key, workload, pod, bucket, instance, function, or database is involved?
+- **What:** What action was observed, and what resource was affected? Was there access, execution, configuration change, network communication, or an authentication attempt?
+- **When:** When did the first and last observations occur? Did the activity take place outside expected business hours or near other changes?
+- **Where:** From which IP address, country, ASN, AWS region, VPC, subnet, namespace, or service did the activity originate?
+- **Why:** Is there an operational justification, approved automation, authorized security testing activity, or planned change that explains the event?
+
+## Detailed Checklist for Analysts Reviewing the Alert
+
+- `Finding ID`, `finding type`, `severity`, `account`, `region`, and affected resource.
+- Involved identity: `userName`, `role`, `accessKeyId`, `service account`, task role, or execution role.
+- `Source` and `destination IPs`, `domain`, reputation score, `country`, `ASN`, `ports`, `protocols`, and traffic volume.
+- First and last observed event, frequency, `service.count` value, and recurrence within the analysis period.
+- Sensitive actions such as IAM changes, bucket policy modifications, security group updates, CloudTrail logging changes, command execution, and access to secrets or data.
+- Relationship with other GuardDuty findings, SIEM alerts, EDR detections, Security Hub findings, or existing tickets.
+- Confirmation with the owner regarding expected activity, authorized automation, controlled testing, or unknown behavior.
+
+## Evidence for Determination
+
+### False Positives
+
+- A legitimate but newly-deployed batch job, migration, backup, or analytics pipeline is accessing the bucket at a different scale or pattern than before.
+- A new team or application was recently granted access to the bucket and its usage pattern has not yet been absorbed into GuardDuty's baseline.
+- An approved bulk lifecycle operation (archival, cleanup, reorganization) is running as scheduled.
+
+### True Positives
+
+- The identity accessing the bucket is downloading or copying an unusually large volume of objects, consistent with bulk data theft, with no corresponding change ticket or business justification.
+- The access originates from an identity or source IP that does not normally interact with this bucket.
+- The activity is followed by further suspicious signals (data appearing on a paste site, ransom note objects, or a related GuardDuty finding).
+- The bucket owner cannot explain the activity when contacted.
+
+### True Negatives
+
+- The owner confirms the activity matches an approved, scheduled data operation.
+
+### False Negatives
+
+- The malicious access is paced to closely resemble the bucket's normal traffic pattern (similar volume, similar identity, similar time of day), staying within the learned baseline.
+- Data is accessed through a pre-signed URL or CloudFront distribution that obscures the true identity of the requester from GuardDuty's S3-data-event visibility.
+
+## References
+
+- [S3 Protection finding types](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-s3.html)
+- [Remediating a potentially compromised S3 bucket](https://docs.aws.amazon.com/guardduty/latest/ug/compromised-s3.html)
+- [NIST SP 800-61r3: Incident Response Recommendations](https://csrc.nist.gov/pubs/sp/800/61/r3/final)
+- [AWS Security Incident Response Guide (2023)](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
