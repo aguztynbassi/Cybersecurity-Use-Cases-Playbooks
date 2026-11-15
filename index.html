@@ -324,7 +324,7 @@ digital forensics and cybersecurity operational guides.
 
 <span id="closeModal" class="close">&times;</span>
 
-<h2 id="playbookTitle"></h2>
+<h4 id="playbookTitle"></h4>
 
 <div id="playbookBody"></div>
 
@@ -333,7 +333,7 @@ digital forensics and cybersecurity operational guides.
 </div>
 
 <footer>
-Cybersecurity Use Cases & Playbooks Portal
+Cybersecurity Use Cases
 </footer>
 
 <script>
@@ -454,26 +454,14 @@ function render() {
         });
 
     document.getElementById("stats").innerHTML =
-        `${filtered.length} playbooks indexed`;
+        `${filtered.length} Use Cases indexed`;
 
     document.getElementById("cards").innerHTML =
         filtered.map(item => `
 
         <div class="card">
 
-            <div class="badges">
-
-                <span class="badge">
-                    ${item.section}
-                </span>
-
-            </div>
-
             <h3>${item.title}</h3>
-
-            <div class="path">
-                ${item.path}
-            </div>
 
             <button
                 class="open-btn"
