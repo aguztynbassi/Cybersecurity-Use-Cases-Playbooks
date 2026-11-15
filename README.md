@@ -37,12 +37,12 @@ MITRE ATT&CK organizes adversary behavior into **tactics** and **techniques**. A
 
 Each technique is colored according to the highest severity of the use cases contributing to its mapping:
 
-| Color | Severity |
-| --- | --- |
-| Purple | Critical |
-| Red | High |
-| Blue | Medium |
-| Yellow | Low |
+| Color | Severity | Priority | Response Time |
+| --- | --- | --- | --- |
+| Purple | Critical | P1 | < 15 minutes |
+| Red | High | P2 | < 1 hour |
+| Blue | Medium | P3 | < 4 hours |
+| Yellow | Low | P4 | < 24 hours |
 
 Severity is explicitly specified in approximately 20% of the source use cases; for the rest, it was inferred from tactics and threat-related keywords. The JSON file includes comments and metadata for each technique to distinguish explicit contributions from inferred ones. Note also that ATT&CK v19 reorganized its taxonomy: the **Defense Evasion** tactic was removed under that name and split into **Stealth** and **Defense Impairment**.
 
